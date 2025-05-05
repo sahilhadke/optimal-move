@@ -49,6 +49,22 @@
       background-color: #3a78c2;
     }
 
+    .spinner {
+      display: none;
+      margin: 20px auto;
+      width: 24px;
+      height: 24px;
+      border: 3px solid #ccc;
+      border-top: 3px solid #4a90e2;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
     pre {
       margin-top: 20px;
       background-color: #fff;
@@ -69,8 +85,25 @@
   </div>
 
   <button id="loadBoard">Find Best Move</button>
+  <div class="spinner" id="spinner"></div>
   <pre id="output">No move yet.</pre>
 
   <script src="popup.js"></script>
+  <script>
+    const button = document.getElementById("loadBoard");
+    const spinner = document.getElementById("spinner");
+    const output = document.getElementById("output");
+
+    button.addEventListener("click", () => {
+      spinner.style.display = "block";
+      output.textContent = "Calculating...";
+
+      // Simulate loading delay (you will replace this with actual logic)
+      setTimeout(() => {
+        spinner.style.display = "none";
+        output.textContent = "Best move calculated here.";
+      }, 2000);
+    });
+  </script>
 </body>
 </html>

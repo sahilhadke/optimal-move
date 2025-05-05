@@ -8,9 +8,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 async function extractBoardInfo() {
+    console.log("Extracting board info...");
     const moves = [];
 
-    // Extract moves from DOM
     document.querySelectorAll(".main-line-row").forEach(row => {
         const whiteMoveElem = row.querySelector(".white-move.main-line-ply");
         const blackMoveElem = row.querySelector(".black-move.main-line-ply");
@@ -48,12 +48,65 @@ async function extractBoardInfo() {
     const fen = game.fen();
     console.log("Final FEN:", fen);
 
-    // Get last move in UCI format
     const history = game.history({ verbose: true });
     const lastMove = history[history.length - 1];
     const lastMoveUci = lastMove ? `${lastMove.from}${lastMove.to}` : null;
 
     const bestMove = await fetchBestMove(fen);
+
+    const map = {
+        'a': 1,
+        'b': 2,
+        'c': 3,
+        'd': 4,
+        'e': 5,
+        'f': 6,
+        'g': 7,
+        'h': 8
+    };
+    console.log("Best move:", bestMove);
+
+    let first_square = bestMove.slice(0, 2);
+    console.log('debug: ', first_square);
+    first_square = map[first_square[0]] + first_square[1];
+
+    console.log("First square:", first_square);
+
+    let second_square = bestMove.slice(2, 4);
+    console.log('debug: ', second_square);
+    second_square = map[second_square[0]] + second_square[1];
+
+    console.log("Second square:", second_square);
+
+    const firstSquare = document.querySelector(`.square-${first_square}`);
+    const secondSquare = document.querySelector(`.square-${second_square}`);
+
+    let highlightDiv = null;
+    if (!secondSquare) {
+        const boardPlayComputer = document.getElementById('board-single');
+
+        highlightDiv = document.createElement('div');
+        highlightDiv.classList.add('highlight', 'to-remove-in-2-seconds', `square-${second_square}`);
+        highlightDiv.style.backgroundColor = 'rgb(235, 97, 80)';
+        highlightDiv.style.opacity = '0.8';
+        highlightDiv.dataset.testElement = 'highlight';
+        boardPlayComputer.appendChild(highlightDiv);
+    } else {
+        secondSquare.style.border = '5px solid red';
+    }
+
+    firstSquare.style.border = '5px solid red';
+
+    setTimeout(() => {
+        firstSquare.style.border = 'none';
+        const highlightDiv = document.querySelector(`.to-remove-in-2-seconds`);
+        if (highlightDiv) {
+            highlightDiv.remove();
+        }
+        if (secondSquare) {
+            secondSquare.style.border = 'none';
+        }
+    }, 1000);
 
     return {
         fen,
@@ -64,28 +117,23 @@ async function extractBoardInfo() {
 
 function cleanMove(move) {
     move = move.trim();
-
-    // Remove multiple spaces and check/mate symbols
     move = move.replace(/\s+/g, "").replace(/[+#]/g, "");
 
     const firstChar = move.charAt(0);
 
     if (firstChar) {
         move = firstChar + move.slice(1);
-    } 
+    }
 
     return move;
 }
 
 async function fetchBestMove(fen) {
-
-    
-
     const url = "https://chess-stockfish-16-api.p.rapidapi.com/chess/api";
     const headers = {
         "Content-Type": "application/x-www-form-urlencoded",
         "x-rapidapi-host": "chess-stockfish-16-api.p.rapidapi.com",
-        "x-rapidapi-key": "API_KEY" // Replace with your actual API key
+        "x-rapidapi-key": "API_KEY"
     };
 
     const body = new URLSearchParams({ fen });
@@ -101,3 +149,43 @@ async function fetchBestMove(fen) {
         return null;
     }
 }
+
+function addOptimalMoveButton() {
+    const playerComponent = document.querySelector('.player-component.player-top');
+
+    if (!playerComponent) {
+        console.log("Player component not found yet. Retrying...");
+        setTimeout(addOptimalMoveButton, 1000);
+        return;
+    }
+
+    if (document.getElementById('get-next-best-move')) return;
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.id = 'get-next-best-move';
+
+    const button = document.createElement('button');
+
+    // button class cc-button-component cc-button-primary cc-bg-primary cc-button-medium
+    button.classList.add('cc-button-component', 'cc-button-primary', 'cc-bg-primary', 'cc-button-medium');
+    button.style.marginRight = '5px';
+    button.style.marginLeft = '5px';
+    button.style.height = '100%';
+    
+    button.textContent = "Optimal Move";
+    button.addEventListener('click', extractBoardInfo);
+    
+    buttonContainer.appendChild(button);
+
+    if (playerComponent.children.length >= 2) {
+        playerComponent.insertBefore(buttonContainer, playerComponent.children[2]);
+    } else {
+        playerComponent.appendChild(buttonContainer);
+    }
+
+    console.log("Optimal Move button added!");
+}
+
+window.addEventListener("load", () => {
+    setTimeout(addOptimalMoveButton, 2000);
+});

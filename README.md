@@ -10,14 +10,17 @@
   A Chrome extension that uses the Stockfish chess engine to get the next best move on chess.com.
 </p>
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/sahilhadke/optimal-move/main/resources/optimal-move.gif" alt="GIF of the extension in action">
+</p>
+
 
 ## How to use
 
-1. Install the extension from the Chrome Web Store.
+1. Install the extension.
 2. Go to chess.com and start a game.
-3. Click on the extension icon in the top right corner of the browser.
-4. The extension will load the current board and make a request to the Stockfish API to get the next best move.
-5. The best move will be displayed in the popup.
+3. A button labeled "Optimal Move" will appear on the screen.
+4. Click on the button to get the next best move using the Stockfish chess engine.
 
 ## How it works
 

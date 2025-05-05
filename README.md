@@ -1,9 +1,15 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/sahilhadke/optimal-move/main/icon.png" width="128" height="128" alt="Icon">
+</p>
 
-![Icon](https://raw.githubusercontent.com/sahilhadke/optimal-move/main/icon.png)
+<h1 align="center">
+  Optimal Move
+</h1>
 
-# Optimal Move
+<p align="center">
+  A Chrome extension that uses the Stockfish chess engine to get the next best move on chess.com.
+</p>
 
-A Chrome extension that uses the Stockfish chess engine to get the next best move on chess.com.
 
 ## How to use
 

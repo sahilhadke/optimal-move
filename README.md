@@ -17,22 +17,8 @@ The extension extracts the current board from chess.com and sends it to the Stoc
 ## Limitations
 
 * The extension only works on chess.com.
-* The extension does not support all types of chess games (e.g. blitz, bullet).
 * The extension does not support all chess variants (e.g. chess960, crazyhouse).
 * The extension does not support analysis of games that are not currently in progress.
-
-## Known issues
-
-* The extension may not work properly if the game is paused or if the user is not logged in.
-* The extension may not work properly if the game is not in the standard algebraic notation (e.g. if the game is in a different language).
-
-## Development
-
-The extension is written in HTML, CSS, and JavaScript. The code is hosted on GitHub and can be modified and redistributed under the MIT license.
-
-## License
-
-The extension is licensed under the MIT license. See the LICENSE file for more information.
 
 ## Acknowledgments
 

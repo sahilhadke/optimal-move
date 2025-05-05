@@ -1,3 +1,6 @@
+
+![Icon](https://github.com/kevinjalbert/optimal-move/raw/master/icon.png)
+
 # Optimal Move
 
 A Chrome extension that uses the Stockfish chess engine to get the next best move on chess.com.
@@ -23,3 +26,5 @@ The extension extracts the current board from chess.com and sends it to the Stoc
 ## Acknowledgments
 
 The extension uses the Stockfish chess engine, which is licensed under the GNU General Public License version 3. The extension also uses the chess.js library, which is licensed under the MIT license.
+
+

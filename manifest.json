@@ -1,0 +1,18 @@
+{
+    "name": "Optimal Move",
+    "description": "Get the next best move on chess.com",
+    "version": "1.0",
+    "manifest_version": 3,
+    "action": {
+      "default_icon": "./icon.png",
+      "default_popup": "popup.html"
+    },
+    "permissions": ["scripting", "activeTab"],
+    "content_scripts": [
+    {
+      "matches": ["*://www.chess.com/*"],
+      "js": ["content.js", "chess.min.js"],
+      "run_at": "document_idle"
+    }
+    ]
+  }

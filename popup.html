@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Optimal Move</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+      width: 300px;
+      box-sizing: border-box;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .header img {
+      width: 24px;
+      height: 24px;
+    }
+
+    .header h1 {
+      font-size: 18px;
+      margin: 0;
+      color: #222;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #3a78c2;
+    }
+
+    pre {
+      margin-top: 20px;
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 13px;
+      color: #444;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="icon.png" alt="Chess Icon">
+    <h1>Optimal Move</h1>
+  </div>
+
+  <button id="loadBoard">Find Best Move</button>
+  <pre id="output">No move yet.</pre>
+
+  <script src="popup.js"></script>
+</body>
+</html>

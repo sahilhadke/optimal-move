@@ -1,5 +1,5 @@
 
-![Icon](https://github.com/kevinjalbert/optimal-move/raw/master/icon.png)
+![Icon](https://raw.githubusercontent.com/sahilhadke/optimal-move/main/icon.png)
 
 # Optimal Move
 

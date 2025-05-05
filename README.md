@@ -17,10 +17,18 @@
 
 ## How to use
 
-1. Install the extension.
-2. Go to chess.com and start a game.
-3. A button labeled "Optimal Move" will appear on the screen.
-4. Click on the button to get the next best move using the Stockfish chess engine.
+1. Download the code from this repository as a zip file.
+2. Extract the contents of the zip file to a folder on your computer.
+3. Go to https://rapidapi.com/cinnamon17/api/chess-stockfish-16-api/playground and get your free API key.
+4. Add the API key to the `content.js` file.
+5. Go to the Chrome extensions page by typing `chrome://extensions/` in the address bar.
+6. Enable developer mode by toggling the switch in the top right corner.
+7. Click "Load unpacked".
+8. Select the folder that contains the extracted code.
+9. Install the extension.
+10. Go to chess.com and start a game.
+11. A button labeled "Optimal Move" will appear on the screen.
+12. Click on the button to get the next best move using the Stockfish chess engine.
 
 ## How it works
 

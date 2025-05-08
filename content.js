@@ -52,7 +52,23 @@ async function extractBoardInfo() {
     const lastMove = history[history.length - 1];
     const lastMoveUci = lastMove ? `${lastMove.from}${lastMove.to}` : null;
 
-    const bestMove = await fetchBestMove(fen);
+    const bestMove = await new Promise((resolve) => {
+        chrome.runtime.sendMessage(
+            { type: "FETCH_BEST_MOVE", fen },
+            (response) => resolve(response.bestMove)
+        );
+    });
+
+    // Get move analysis from Gemini
+    const moveAnalysis = await new Promise((resolve) => {
+        chrome.runtime.sendMessage(
+            { type: "ANALYZE_MOVE", fen, bestMove },
+            (response) => resolve(response.analysis)
+        );
+    });
+
+    // Show the analysis popup
+    showAnalysisPopup(moveAnalysis);
 
     const map = {
         'a': 1,
@@ -83,7 +99,12 @@ async function extractBoardInfo() {
 
     let highlightDiv = null;
     if (!secondSquare) {
-        const boardPlayComputer = document.getElementById('board-single');
+        var boardPlayComputer = document.getElementById('board-single');
+
+        if (!boardPlayComputer) {
+            // wc-chess-board with id board-play-computer
+            boardPlayComputer = document.querySelector('#board-play-computer');
+        }
 
         highlightDiv = document.createElement('div');
         highlightDiv.classList.add('highlight', 'to-remove-in-2-seconds', `square-${second_square}`);
@@ -92,26 +113,31 @@ async function extractBoardInfo() {
         highlightDiv.dataset.testElement = 'highlight';
         boardPlayComputer.appendChild(highlightDiv);
     } else {
-        secondSquare.style.border = '5px solid red';
+        secondSquare.style.backgroundColor = 'rgb(235, 97, 80)';
+        secondSquare.style.opacity = '0.8';
     }
 
-    firstSquare.style.border = '5px solid red';
+    firstSquare.style.backgroundColor = 'rgb(235, 97, 80)';
+    firstSquare.style.opacity = '0.8';
 
     setTimeout(() => {
-        firstSquare.style.border = 'none';
+        firstSquare.style.backgroundColor = '';
+        firstSquare.style.opacity = '';
         const highlightDiv = document.querySelector(`.to-remove-in-2-seconds`);
         if (highlightDiv) {
             highlightDiv.remove();
         }
         if (secondSquare) {
-            secondSquare.style.border = 'none';
+            secondSquare.style.backgroundColor = '';
+            secondSquare.style.opacity = '';
         }
     }, 1000);
 
     return {
         fen,
         lastMoveUci,
-        bestMove
+        bestMove,
+        moveAnalysis
     };
 }
 
@@ -128,30 +154,16 @@ function cleanMove(move) {
     return move;
 }
 
-async function fetchBestMove(fen) {
-    const url = "https://chess-stockfish-16-api.p.rapidapi.com/chess/api";
-    const headers = {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "x-rapidapi-host": "chess-stockfish-16-api.p.rapidapi.com",
-        "x-rapidapi-key": "API_KEY"
-    };
-
-    const body = new URLSearchParams({ fen });
-
-    try {
-        const response = await fetch(url, { method: "POST", headers, body });
-        const data = await response.json();
-
-        console.log("Best move from Stockfish API:", data.bestmove);
-        return data.bestmove;
-    } catch (error) {
-        console.error("Failed to fetch best move:", error);
-        return null;
-    }
-}
-
 function addOptimalMoveButton() {
-    const playerComponent = document.querySelector('.player-component.player-top');
+    console.log("Adding optimal move button...");
+    var playerComponent = document.querySelector('.player-component.player-bottom');
+
+    // if playerComponent is not found, search for div with id player-bottom
+    if (!playerComponent) {
+        playerComponent = document.querySelector('#player-bottom');
+        // in div class player-row-wrapper which is anywhere under playerComponent, find the first div with class player-component
+        playerComponent = playerComponent.querySelector('.player-row-wrapper');
+    }
 
     if (!playerComponent) {
         console.log("Player component not found yet. Retrying...");
@@ -189,3 +201,79 @@ function addOptimalMoveButton() {
 window.addEventListener("load", () => {
     setTimeout(addOptimalMoveButton, 2000);
 });
+// Add this function to create and show the popup
+function showAnalysisPopup(analysis) {
+    // Remove existing popup if any
+    const existingPopup = document.getElementById('move-analysis-popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+
+    // Create popup container
+    const popup = document.createElement('div');
+    popup.id = 'move-analysis-popup';
+    popup.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: rgb(93 153 72);
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 300px;
+        z-index: 9999;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 14px;
+        line-height: 1.4;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    `;
+
+    // Create header
+    const header = document.createElement('div');
+    header.style.cssText = `
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    `;
+
+    const title = document.createElement('div');
+    title.textContent = 'Move Analysis';
+    title.style.fontWeight = 'bold';
+
+    const closeButton = document.createElement('button');
+    closeButton.textContent = '×';
+    closeButton.style.cssText = `
+        background: none;
+        border: none;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 0 5px;
+    `;
+    closeButton.onclick = () => popup.remove();
+
+    header.appendChild(title);
+    header.appendChild(closeButton);
+
+    // Create content
+    const content = document.createElement('div');
+    content.textContent = analysis;
+
+    // Assemble popup
+    popup.appendChild(header);
+    popup.appendChild(content);
+    document.body.appendChild(popup);
+
+    // Trigger animation
+    setTimeout(() => {
+        popup.style.opacity = '1';
+        popup.style.transform = 'translateY(0)';
+    }, 10);
+}
+

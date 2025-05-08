@@ -7,12 +7,22 @@
       "default_icon": "./icon.png",
       "default_popup": "popup.html"
     },
-    "permissions": ["scripting", "activeTab"],
+    "permissions": [
+        "scripting",
+        "activeTab"
+    ],
+    "host_permissions": [
+        "https://chess-stockfish-16-api.p.rapidapi.com/*",
+        "https://generativelanguage.googleapis.com/*"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
     "content_scripts": [
-    {
-      "matches": ["*://www.chess.com/*"],
-      "js": ["content.js", "chess.min.js"],
-      "run_at": "document_idle"
-    }
+        {
+            "matches": ["*://www.chess.com/*"],
+            "js": ["content.js", "chess.min.js"],
+            "run_at": "document_idle"
+        }
     ]
-  }
+}
